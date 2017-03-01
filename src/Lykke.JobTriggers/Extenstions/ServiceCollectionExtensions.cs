@@ -52,29 +52,6 @@ namespace Lykke.JobTriggers.Extenstions
         {
             if (!serviceCollection.HasService<ILog>())
                 serviceCollection.AddSingleton<ILog, LogToConsole>();
-        }
-
-        /// <summary>
-        /// Method enables time and queue triggers
-        /// </summary>        
-        /// <param name="connectionPoolSetup">Used to add connections</param>
-        public static void AddTriggers(this ContainerBuilder containerBuilder, Action<IConnectionPool> connectionPoolSetup)
-        {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddTriggers(connectionPoolSetup);
-            containerBuilder.Populate(serviceCollection);
-        }
-
-
-
-        /// <summary>
-        /// Method enables only time triggers
-        /// </summary>        
-        public static void AddTriggers(this ContainerBuilder containerBuilder)
-        {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddTriggers();
-            containerBuilder.Populate(serviceCollection);
-        }
+        }      
     }
 }
