@@ -11,8 +11,8 @@ Provides ability to call methods using Timer Trigger or Queue Trigger (using azu
   var serviceCollection = new ServiceCollection();
   
   // override ILog and IPosionQueueNotifier if you want
-  serviceCollection.AddTransient<ILog, ILogImplementation>();
-  serviceCollection.AddTransient<IPoisionQueueNotifier, IPoisionQueueNotifierImplementation>();
+  serviceCollection.AddTransient<ILog, LogImplementation>();
+  serviceCollection.AddTransient<IPoisionQueueNotifier, PoisionQueueNotifierImplementation>();
   
   // register only time triggers
   serviceCollection.AddTriggers();
@@ -23,7 +23,7 @@ Provides ability to call methods using Timer Trigger or Queue Trigger (using azu
       // default connection must be initialized
       pool.AddDefaultConnection(defaultConnectionString);
       
-      // you can additional connection strings and then specify it in QueueTriggerAttribute 
+      // you can add additional connection strings and then specify it in QueueTriggerAttribute 
       pool.AddConnection("custom", additionalConnectionString);
   });
 ```
