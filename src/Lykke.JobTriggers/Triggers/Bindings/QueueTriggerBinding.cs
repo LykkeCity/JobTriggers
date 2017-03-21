@@ -64,7 +64,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
             if (parameters.Length > 2 && parameters.Length < 1)
                 throw new Exception($"Method {_method.Name} must have 1 or 2 parameters");
             if (parameters.Length == 2 && parameters[1].ParameterType != typeof(DateTimeOffset) && parameters[1].ParameterType != typeof(QueueTriggeringContext))
-                throw new Exception($"Method {_method.Name} second parameter type is {parameters[1].ParameterType.Name}, but should by DateTimeOffset or QueueTriggeringContext");
+                throw new Exception($"Method {_method.Name} second parameter type is {parameters[1].ParameterType.Name}, but should be DateTimeOffset or QueueTriggeringContext");
 
             _parameterType = parameters[0].ParameterType;
             _hasSecondParameter = parameters.Length == 2;

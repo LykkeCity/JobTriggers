@@ -8,6 +8,7 @@ using Lykke.JobTriggers.Abstractions.QueueReader;
 using Lykke.JobTriggers.Implementations;
 using Lykke.JobTriggers.Implementations.QueueReader;
 using Lykke.JobTriggers.Triggers;
+using Lykke.JobTriggers.Triggers.Bindings;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.JobTriggers.Extenstions
@@ -41,6 +42,9 @@ namespace Lykke.JobTriggers.Extenstions
 
             serviceCollection.AddSingleton<IQueueReaderFactory>(new AzureQueueReaderFactory(connectionPool));
 
+            serviceCollection.AddTransient<QueueTriggerBinding>();
+            serviceCollection.AddTransient<TimerTriggerBinding>();
+
             TriggerHost.UseQueueTriggers = true;
         }
 
@@ -52,6 +56,10 @@ namespace Lykke.JobTriggers.Extenstions
         {
             if (!serviceCollection.HasService<ILog>())
                 serviceCollection.AddSingleton<ILog, LogToConsole>();
+
+            serviceCollection.AddTransient<QueueTriggerBinding>();
+            serviceCollection.AddTransient<TimerTriggerBinding>();
         }      
     }
 }
+

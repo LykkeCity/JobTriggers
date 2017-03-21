@@ -25,7 +25,7 @@ namespace Lykke.JobTriggers.Triggers
             _serviceProvider = serviceProvider;
         }
 
-        public void StartAndBlock()
+        public Task Start()
         {
             var assemblies = CollectAssemblies().ToList();
 
@@ -34,7 +34,7 @@ namespace Lykke.JobTriggers.Triggers
                 _bindings.AddRange(new TriggerBindingCollector<QueueTriggerBinding>().CollectFromAssemblies(assemblies, _serviceProvider));
 
             var tasks = _bindings.Select(o => o.RunAsync(_cancellationTokenSource.Token)).ToArray();
-            Task.WaitAll(tasks);
+            return Task.WhenAll(tasks);
         }
 
         public void ProvideAssembly(params Assembly[] assemblies)
