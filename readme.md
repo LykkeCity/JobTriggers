@@ -27,23 +27,21 @@ Provides ability to call methods using Timer Trigger or Queue Trigger (using azu
       pool.AddConnection("custom", additionalConnectionString);
   });
 ```
-If you won't override ILog and IPoisionQueueNotifier then default implementation will be used.
+If you won't register ILog and IPoisionQueueNotifier then default implementation will be used.
 
 - Autofac example
 ```
   var ioc = new ContainerBuilder();
   
-  var serviceCollection = new ServiceCollection();
-  
   // override ILog and IPosionQueueNotifier if you want
-  serviceCollection.AddTransient<ILog, ILogImplementation>();
-  serviceCollection.AddTransient<IPoisionQueueNotifier, IPoisionQueueNotifierImplementation>();
+  ioc.RegisterType<LogImplementation>().As<ILog>();
+  ioc.RegisterType<PoisionQueueNotifierImplementation>().As<IPoisionQueueNotifier>();
   
   // register only time triggers
-  serviceCollection.AddTriggers();
+  ioc.AddTriggers();
   
   //register time and queue triggers
-  serviceCollection.AddTriggers(pool =>
+  ioc.AddTriggers(pool =>
   {
       // default connection must be initialized
       pool.AddDefaultConnection(defaultConnectionString);
@@ -51,8 +49,6 @@ If you won't override ILog and IPoisionQueueNotifier then default implementation
       // you can additional connection strings and then specify it in QueueTriggerAttribute 
       pool.AddConnection("custom", additionalConnectionString);
   });
-  
-  ioc.Populate(serviceCollection);
 ```
 
 3) You should also register your classes, where Triggers are used.
