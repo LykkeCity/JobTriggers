@@ -8,7 +8,8 @@
     },
     "Microsoft.Extensions.DependencyInjection": "1.1.0",
     "Lykke.Common": "1.1.15",
-    "Lykke.AzureStorage": "1.2.5"
+    "Lykke.AzureStorage": "1.2.5",
+    "Autofac": "4.4.0"
   },
 
   "frameworks": {
