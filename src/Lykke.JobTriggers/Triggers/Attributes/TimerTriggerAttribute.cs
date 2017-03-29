@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Lykke.JobTriggers.Triggers.Attributes
 {
@@ -7,12 +8,12 @@ namespace Lykke.JobTriggers.Triggers.Attributes
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="period">Period's format is HH:mm:ss</param>
+        /// <param name="period">Period's format is d.hh:mm:ss</param>
         public TimerTriggerAttribute(string period)
         {
             TimeSpan value;
-            if (!TimeSpan.TryParse(period, out value))
-                throw new ArgumentException("Can't parse to timespan. Expected format is HH:mm:ss", nameof(period));
+            if (!TimeSpan.TryParseExact(period, "c", CultureInfo.InvariantCulture, out value))
+                throw new ArgumentException("Can't parse to timespan. Expected format is d.hh:mm:ss", nameof(period));
             Period = value;
         }
 
