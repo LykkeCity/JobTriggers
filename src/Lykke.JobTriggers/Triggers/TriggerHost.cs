@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.JobTriggers.Triggers.Bindings;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.JobTriggers.Triggers
 {
@@ -34,7 +36,10 @@ namespace Lykke.JobTriggers.Triggers
                 _bindings.AddRange(new TriggerBindingCollector<QueueTriggerBinding>().CollectFromAssemblies(assemblies, _serviceProvider));
 
             var tasks = _bindings.Select(o => o.RunAsync(_cancellationTokenSource.Token)).ToArray();
-            return Task.WhenAll(tasks);
+
+            var logger = _serviceProvider.GetService<ILog>();
+
+            return Task.WhenAll(tasks).ContinueWith(async task => await logger.WriteInfoAsync("TriggerHost", "Start", "", "All bindings are finished")).Unwrap();
         }
 
         public void ProvideAssembly(params Assembly[] assemblies)
