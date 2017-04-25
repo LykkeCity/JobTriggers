@@ -27,7 +27,7 @@ namespace Lykke.JobTriggers.Triggers
             _serviceProvider = serviceProvider;
         }
 
-        public Task Start()
+        public async Task Start()
         {
             var assemblies = CollectAssemblies().ToList();
 
@@ -39,7 +39,8 @@ namespace Lykke.JobTriggers.Triggers
 
             var logger = _serviceProvider.GetService<ILog>();
 
-            return Task.WhenAll(tasks).ContinueWith(async task => await logger.WriteInfoAsync("TriggerHost", "Start", "", "All bindings are finished")).Unwrap();
+            await Task.WhenAll(tasks).ContinueWith(
+                task => logger.WriteInfoAsync("TriggerHost", "Start", "", "All bindings are finished")).Unwrap().ConfigureAwait(false);
         }
 
         public void ProvideAssembly(params Assembly[] assemblies)

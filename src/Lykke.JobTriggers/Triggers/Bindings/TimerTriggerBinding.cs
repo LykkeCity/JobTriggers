@@ -37,7 +37,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
         public override Task RunAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            return Task.Factory.StartNew(async () =>
             {
                 try
                 {
@@ -51,7 +51,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                             await LogError("TimerTriggerBinding", "RunAsync", ex);
                         }
                         finally
-                        {                            
+                        {
                             await Task.Delay(_period, cancellationToken);
                         }
                 }
@@ -59,13 +59,13 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                 {
                     await _log.WriteInfoAsync("TimerTriggerBinding", "RunAsync", _processId, "Process ended");
                 }
-            }, cancellationToken);
+            }, cancellationToken, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap();
         }
 
         private Task LogError(string component, string process, Exception ex)
         {
             try
-            {
+            {                
                 return _log.WriteErrorAsync(component, process, _processId, ex);
             }
             catch (Exception logEx)

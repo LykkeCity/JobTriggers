@@ -76,7 +76,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
         public override Task RunAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            return Task.Factory.StartNew(async () =>
             {
                 try
                 {
@@ -120,7 +120,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                 {
                     await _log.WriteInfoAsync("QueueTriggerBinding", "RunAsync", _queueName, "Process ended");
                 }
-            }, cancellationToken);
+            }, cancellationToken, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap();
         }
 
 
@@ -146,6 +146,8 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
         private Task ProcessFailedMessage(IQueueMessage message)
         {
+            if (message == null)
+                return Task.CompletedTask;
             try
             {
                 if (message.DequeueCount >= MaxDequeueCount)
