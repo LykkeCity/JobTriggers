@@ -16,14 +16,13 @@ namespace Lykke.JobTriggers.Triggers.Bindings
     {
         private readonly TimeSpan _minDelay = TimeSpan.FromMilliseconds(100);
         private readonly TimeSpan _maxDelay = TimeSpan.FromMinutes(1);
-        private const int MaxDequeueCount = 5;
         private const string PoisonSuffix = "-poison";
 
         private readonly ILog _log;
         private readonly IQueueReaderFactory _queueReaderFactory;
         private readonly IPoisionQueueNotifier _notifier;
 
-
+        private int _maxDequeueCount;
         private IDelayStrategy _delayStrategy;
         private MethodInfo _method;
         private IServiceProvider _serviceProvider;
@@ -72,6 +71,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                 _useTriggeringContext = parameters[1].ParameterType == typeof(QueueTriggeringContext);
             _delayStrategy = new RandomizedExponentialStrategy(_minDelay,
                 metadata.MaxPollingIntervalMs > 0 ? TimeSpan.FromMilliseconds(metadata.MaxPollingIntervalMs) : _maxDelay);
+            _maxDequeueCount = metadata.MaxDequeueCount;
         }
 
         public override Task RunAsync(CancellationToken cancellationToken)
@@ -150,7 +150,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                 return Task.CompletedTask;
             try
             {
-                if (message.DequeueCount >= MaxDequeueCount)
+                if (message.DequeueCount >= _maxDequeueCount)
                     return MoveToPoisonQueue(message, null);
                 else
                 {
