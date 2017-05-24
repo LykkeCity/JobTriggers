@@ -39,6 +39,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
         {
             return Task.Factory.StartNew(async () =>
             {
+                Exception globalEx = null;
                 try
                 {
                     while (!cancellationToken.IsCancellationRequested)
@@ -55,9 +56,15 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                             await Task.Delay(_period, cancellationToken);
                         }
                 }
+                catch (Exception ex)
+                {
+                    globalEx = ex;                    
+                }
                 finally
                 {
-                    await _log.WriteInfoAsync("TimerTriggerBinding", "RunAsync", _processId, "Process ended");
+                    var msg =
+                        $"Process ended. Exception={globalEx?.Message + globalEx?.StackTrace}. Token.IsCancellationRequested={cancellationToken.IsCancellationRequested}";
+                    await _log.WriteInfoAsync("TimerTriggerBinding", "RunAsync", _processId, msg);
                 }
             }, cancellationToken, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap();
         }

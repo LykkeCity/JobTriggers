@@ -38,7 +38,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
         internal Task Delay(int queueLength)
         {
-            return DelayStrategy != null ? DelayStrategy.Delay(queueLength) : Task.CompletedTask;
+            return DelayStrategy != null ? DelayStrategy.Delay(queueLength) : Task.Delay(1);
         }
 
         internal enum MessageMovingAction

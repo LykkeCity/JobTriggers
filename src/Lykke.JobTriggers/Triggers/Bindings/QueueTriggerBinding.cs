@@ -78,6 +78,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
         {
             return Task.Factory.StartNew(async () =>
             {
+                Exception globalEx = null;
                 try
                 {
                     while (!cancellationToken.IsCancellationRequested)
@@ -94,10 +95,10 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
                                 var context = new QueueTriggeringContext(message.InsertionTime);
 
-                                var p = new List<object>() { message.Value(_parameterType) };
+                                var p = new List<object>() {message.Value(_parameterType)};
 
                                 if (_hasSecondParameter)
-                                    p.Add(_useTriggeringContext ? context : (object)message.InsertionTime);
+                                    p.Add(_useTriggeringContext ? context : (object) message.InsertionTime);
 
                                 await Invoke(_serviceProvider, _method, p.ToArray());
                                 await ProcessCompletedMessage(message, context);
@@ -116,9 +117,15 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    globalEx = ex;                    
+                }
                 finally
                 {
-                    await _log.WriteInfoAsync("QueueTriggerBinding", "RunAsync", _queueName, "Process ended");
+                    var msg =
+                        $"Process ended. Exception={globalEx?.Message + globalEx?.StackTrace}. Token.IsCancellationRequested={cancellationToken.IsCancellationRequested}";
+                    await _log.WriteInfoAsync("QueueTriggerBinding", "RunAsync", _queueName, msg);
                 }
             }, cancellationToken, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap();
         }
