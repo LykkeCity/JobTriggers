@@ -6,6 +6,7 @@ using Autofac;
 using Common.Log;
 using Lykke.JobTriggers.Abstractions;
 using Lykke.JobTriggers.Abstractions.QueueReader;
+using Lykke.JobTriggers.Autofac;
 using Lykke.JobTriggers.Implementations;
 using Lykke.JobTriggers.Implementations.QueueReader;
 using Lykke.JobTriggers.Triggers;
@@ -54,6 +55,8 @@ namespace Lykke.JobTriggers.Extenstions
 
             containerBuilder.RegisterType<QueueTriggerBinding>();
             containerBuilder.RegisterType<TimerTriggerBinding>();
+
+            containerBuilder.RegisterSource(new JobFunctionsNotAlreadyRegisteredSource());
         }
     }
 }
