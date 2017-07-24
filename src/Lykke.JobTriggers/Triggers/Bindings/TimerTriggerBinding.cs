@@ -58,7 +58,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                 }
                 catch (Exception ex)
                 {
-                    globalEx = ex;                    
+                    globalEx = ex;
                 }
                 finally
                 {
@@ -69,16 +69,15 @@ namespace Lykke.JobTriggers.Triggers.Bindings
             }, cancellationToken, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap();
         }
 
-        private Task LogError(string component, string process, Exception ex)
+        private async Task LogError(string component, string process, Exception ex)
         {
             try
-            {                
-                return _log.WriteErrorAsync(component, process, _processId, ex);
+            {
+                await _log.WriteErrorAsync(component, process, _processId, ex);
             }
             catch (Exception logEx)
             {
                 Console.WriteLine($"Error in logger: {logEx.Message}. Trace: {logEx.StackTrace}");
-                return Task.CompletedTask;
             }
         }
     }
