@@ -151,22 +151,22 @@ namespace Lykke.JobTriggers.Triggers.Bindings
             await context.Delay(await _queueReader.Count());
         }
 
-        private Task ProcessFailedMessage(IQueueMessage message)
+        private async Task ProcessFailedMessage(IQueueMessage message)
         {
             if (message == null)
-                return Task.CompletedTask;
+                return;
             try
             {
                 if (message.DequeueCount >= _maxDequeueCount)
-                    return MoveToPoisonQueue(message, null);
+                    await MoveToPoisonQueue(message, null);
                 else
                 {
-                    return _queueReader.ReleaseMessageAsync(message);
+                    await _queueReader.ReleaseMessageAsync(message);
                 }
             }
             catch (Exception ex)
             {
-                return LogError("QueueTriggerBinding", "ProcessFailedMessage", ex);
+                await LogError("QueueTriggerBinding", "ProcessFailedMessage", ex);
             }
         }
 
