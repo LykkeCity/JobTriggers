@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lykke.JobTriggers", "src\Lykke.JobTriggers\Lykke.JobTriggers.xproj", "{27818F68-9F30-433C-9DDB-E9D8ACC453A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.JobTriggers", "src\Lykke.JobTriggers\Lykke.JobTriggers.csproj", "{27818F68-9F30-433C-9DDB-E9D8ACC453A5}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Test", "tests\Test\Test.xproj", "{5216F01A-FC31-4510-B68A-449C77A30D3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "tests\Test\Test.csproj", "{5216F01A-FC31-4510-B68A-449C77A30D3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DAB5DAE3-53BC-4B68-9313-668F7B0DE6A3}
 	EndGlobalSection
 EndGlobal
