@@ -9,6 +9,7 @@ using Autofac.Features.ResolveAnything;
 using Common.Log;
 using Lykke.JobTriggers.Extenstions;
 using Lykke.JobTriggers.Triggers;
+using Lykke.SettingsReader;
 
 namespace Test
 {
@@ -24,19 +25,33 @@ namespace Test
 
             builder.AddTriggers(pool =>
             {
-                pool.AddDefaultConnection("UseDevelopmentStorage=true");
+                pool.AddDefaultConnection(new FakeReloadingManager("UseDevelopmentStorage=true"));
             });
-            
+
             builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
             var container = builder.Build();
 
             var host = new TriggerHost(new AutofacServiceProvider(container));
             var task = host.Start();
-            
+
             Console.ReadKey();
             host.Cancel();
             task.Wait();
             Console.ReadKey();
+        }
+
+        public class FakeReloadingManager : IReloadingManager<string>
+        {
+            private readonly string _value;
+
+            public FakeReloadingManager(string value)
+            {
+                _value = value;
+            }
+
+            public Task<string> Reload() => Task.FromResult(_value);
+            public bool HasLoaded => true;
+            public string CurrentValue => _value;
         }
     }
 }

@@ -38,12 +38,8 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
         public QueueTriggerBinding(ILog log, IQueueReaderFactory queueReaderFactory, IPoisionQueueNotifier notifier)
         {
-            if (queueReaderFactory == null)
-                throw new ArgumentNullException(nameof(queueReaderFactory));
-            if (log == null)
-                throw new ArgumentNullException(nameof(log));
-            _log = log;
-            _queueReaderFactory = queueReaderFactory;
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _queueReaderFactory = queueReaderFactory ?? throw new ArgumentNullException(nameof(queueReaderFactory));
             _notifier = notifier;
         }
 

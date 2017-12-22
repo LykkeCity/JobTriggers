@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="Lykke.AzureStorage" Version="1.2.38" />
+    <PackageReference Include="Lykke.AzureStorage" Version="3.1.0" />
     <PackageReference Include="Autofac" Version="4.6.1" />
   </ItemGroup>
 

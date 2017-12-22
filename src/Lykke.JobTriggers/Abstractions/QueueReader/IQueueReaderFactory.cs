@@ -1,7 +1,9 @@
-﻿namespace Lykke.JobTriggers.Abstractions.QueueReader
+﻿using Lykke.SettingsReader;
+
+namespace Lykke.JobTriggers.Abstractions.QueueReader
 {
     public interface IQueueReaderFactory
     {
-	    IQueueReader Create(string connection, string queueName);
+        IQueueReader Create(string connection, string queueName);
     }
 }

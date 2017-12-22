@@ -1,5 +1,6 @@
 ﻿using AzureStorage.Queue;
 using Lykke.JobTriggers.Abstractions.QueueReader;
+using Lykke.SettingsReader;
 using IQueueReader = Lykke.JobTriggers.Abstractions.QueueReader.IQueueReader;
 
 namespace Lykke.JobTriggers.Implementations.QueueReader
@@ -15,7 +16,7 @@ namespace Lykke.JobTriggers.Implementations.QueueReader
 
         public IQueueReader Create(string connection, string queueName)
         {
-            return new AzureQueueReader(new AzureQueueExt(_connectionPool.GetConnection(connection), queueName));
+            return new AzureQueueReader(AzureQueueExt.Create(_connectionPool.GetConnection(connection), queueName));
         }
     }
 }

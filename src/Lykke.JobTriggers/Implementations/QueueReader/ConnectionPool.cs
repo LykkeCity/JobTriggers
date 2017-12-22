@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lykke.JobTriggers.Abstractions.QueueReader;
+using Lykke.SettingsReader;
 
 namespace Lykke.JobTriggers.Implementations.QueueReader
 {
@@ -8,21 +9,21 @@ namespace Lykke.JobTriggers.Implementations.QueueReader
     {
         public const string DefaultConnection = "default";
 
-        private readonly Dictionary<string, string> _connections = new Dictionary<string, string>();
+        private readonly Dictionary<string, IReloadingManager<string>> _connections = new Dictionary<string, IReloadingManager<string>>();
 
-        public void AddConnection(string alias, string connectionString)
+        public void AddConnection(string alias, IReloadingManager<string> connectionString)
         {
             _connections[alias] = connectionString;
         }
 
-        public string GetConnection(string alias)
+        public IReloadingManager<string> GetConnection(string alias)
         {
             if (!_connections.ContainsKey(alias))
                 throw new Exception($"Connection alias '{alias}' is not registered");
             return _connections[alias];
         }
 
-        public void AddDefaultConnection(string connectionString)
+        public void AddDefaultConnection(IReloadingManager<string> connectionString)
         {
             AddConnection(DefaultConnection, connectionString);
         }

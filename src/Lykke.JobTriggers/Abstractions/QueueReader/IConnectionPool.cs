@@ -1,10 +1,12 @@
-﻿namespace Lykke.JobTriggers.Abstractions.QueueReader
+﻿using Lykke.SettingsReader;
+
+namespace Lykke.JobTriggers.Abstractions.QueueReader
 {
     public interface IConnectionPool
     {
-        void AddConnection(string alias, string connectionString);
-        string GetConnection(string alias);
-        void AddDefaultConnection(string connectionString);
+        void AddConnection(string alias, IReloadingManager<string> connectionString);
+        IReloadingManager<string> GetConnection(string alias);
+        void AddDefaultConnection(IReloadingManager<string> connectionString);
         bool HasConnection(string alias);
     }
 }
