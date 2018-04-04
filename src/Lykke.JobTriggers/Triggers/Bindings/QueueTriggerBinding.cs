@@ -52,7 +52,7 @@ namespace Lykke.JobTriggers.Triggers.Bindings
 
             _connection = metadata.Connection;
             _queueName = metadata.Queue;
-            _queueReader = _queueReaderFactory.Create(_connection, _queueName, metadata.Timeout);
+            _queueReader = _queueReaderFactory.Create(_connection, _queueName, TimeSpan.FromSeconds(metadata.TimeoutInSeconds));
             _shouldNotify = metadata.Notify;
 
             var parameters = _method.GetParameters();
