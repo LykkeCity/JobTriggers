@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
 using Common.Log;
 using Lykke.JobTriggers.Abstractions;
 using Lykke.JobTriggers.Abstractions.QueueReader;
@@ -96,7 +97,21 @@ namespace Lykke.JobTriggers.Triggers.Bindings
                                 if (_hasSecondParameter)
                                     p.Add(_useTriggeringContext ? context : (object) message.InsertionTime);
 
-                                await Invoke(_serviceProvider, _method, p.ToArray());
+                                var telemtryOperation = ApplicationInsightsTelemetry.StartRequestOperation($"{nameof(QueueTriggerBinding)} from {_queueName}");
+                                try
+                                {
+                                    await Invoke(_serviceProvider, _method, p.ToArray());
+                                }
+                                catch (Exception ex)
+                                {
+                                    ApplicationInsightsTelemetry.MarkFailedOperation(telemtryOperation);
+                                    ApplicationInsightsTelemetry.TrackException(ex);
+                                    throw;
+                                }
+                                finally
+                                {
+                                    ApplicationInsightsTelemetry.StopOperation(telemtryOperation);
+                                }
                                 await ProcessCompletedMessage(message, context);
                                 executionSucceeded = true;
                             } while (!cancellationToken.IsCancellationRequested);
