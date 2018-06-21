@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
-using Common.Log;
+using JetBrains.Annotations;
 using Lykke.JobTriggers.Abstractions;
 using Lykke.JobTriggers.Abstractions.QueueReader;
 using Lykke.JobTriggers.Autofac;
@@ -14,6 +11,7 @@ using Lykke.JobTriggers.Triggers.Bindings;
 
 namespace Lykke.JobTriggers.Extenstions
 {
+    [PublicAPI]
     public static class AutofacExtensions
     {
         /// <summary>
@@ -49,10 +47,6 @@ namespace Lykke.JobTriggers.Extenstions
         /// <param name="containerBuilder"></param>
         public static void AddTriggers(this ContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterType<LogToConsole>()
-                            .As<ILog>()
-                            .IfNotRegistered(typeof(ILog));
-
             containerBuilder.RegisterType<QueueTriggerBinding>();
             containerBuilder.RegisterType<TimerTriggerBinding>();
 
