@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using JetBrains.Annotations;
+using Lykke.Common.Log;
 using Lykke.JobTriggers.Abstractions;
 using Lykke.JobTriggers.Abstractions.QueueReader;
 using Lykke.JobTriggers.Triggers.Attributes;
@@ -13,6 +15,8 @@ using Lykke.JobTriggers.Triggers.Delay;
 namespace Lykke.JobTriggers.Triggers.Bindings
 {
     [TriggerDefine(typeof(QueueTriggerAttribute))]
+    [PublicAPI]
+    [UsedImplicitly]
     public class QueueTriggerBinding : BaseTriggerBinding
     {
         private readonly TimeSpan _minDelay = TimeSpan.FromMilliseconds(100);
@@ -36,12 +40,24 @@ namespace Lykke.JobTriggers.Triggers.Bindings
         private bool _shouldNotify;
         private string _connection;
 
-
+        [Obsolete]
         public QueueTriggerBinding(ILog log, IQueueReaderFactory queueReaderFactory, IPoisionQueueNotifier notifier)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
             _queueReaderFactory = queueReaderFactory ?? throw new ArgumentNullException(nameof(queueReaderFactory));
             _notifier = notifier;
+        }
+
+        public QueueTriggerBinding(ILogFactory logFactory, IQueueReaderFactory queueReaderFactory, IPoisionQueueNotifier notifier)
+        {
+            if (logFactory == null)
+            {
+                throw new ArgumentNullException(nameof(logFactory));
+            }
+            
+            _log = logFactory.CreateLog(this);
+            _queueReaderFactory = queueReaderFactory ?? throw new ArgumentNullException(nameof(queueReaderFactory));
+            _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
         }
 
         public override void InitBinding(IServiceProvider serviceProvider, MethodInfo callbackMethod)

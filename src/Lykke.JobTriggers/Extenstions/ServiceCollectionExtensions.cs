@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.Log;
+using JetBrains.Annotations;
 using Lykke.JobTriggers.Abstractions;
 using Lykke.JobTriggers.Abstractions.QueueReader;
 using Lykke.JobTriggers.Implementations;
@@ -13,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.JobTriggers.Extenstions
 {
+    [PublicAPI]
     public static class ServiceCollectionExtensions
     {
-
         private static bool HasService<T>(this IServiceCollection serviceCollection)
         {
             return serviceCollection.Any(o => o.ServiceType == typeof(T));
@@ -27,9 +25,6 @@ namespace Lykke.JobTriggers.Extenstions
         /// <param name="connectionPoolSetup">Used to add connections</param>
         public static void AddTriggers(this IServiceCollection serviceCollection, Action<IConnectionPool> connectionPoolSetup)
         {
-            if (!serviceCollection.HasService<ILog>())
-                serviceCollection.AddSingleton<ILog, LogToConsole>();
-
             if (!serviceCollection.HasService<IPoisionQueueNotifier>())
                 serviceCollection.AddTransient<IPoisionQueueNotifier, EmptyNotifier>();
 
@@ -54,9 +49,6 @@ namespace Lykke.JobTriggers.Extenstions
         /// <param name="serviceCollection"></param>
         public static void AddTriggers(this IServiceCollection serviceCollection)
         {
-            if (!serviceCollection.HasService<ILog>())
-                serviceCollection.AddSingleton<ILog, LogToConsole>();
-
             serviceCollection.AddTransient<QueueTriggerBinding>();
             serviceCollection.AddTransient<TimerTriggerBinding>();
         }      

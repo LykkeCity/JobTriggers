@@ -3,11 +3,15 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Log;
+using JetBrains.Annotations;
+using Lykke.Common.Log;
 using Lykke.JobTriggers.Triggers.Attributes;
 
 namespace Lykke.JobTriggers.Triggers.Bindings
 {
     [TriggerDefine(typeof(TimerTriggerAttribute))]
+    [PublicAPI]
+    [UsedImplicitly]
     public class TimerTriggerBinding : BaseTriggerBinding
     {
         private readonly ILog _log;
@@ -17,11 +21,20 @@ namespace Lykke.JobTriggers.Triggers.Bindings
         private TimeSpan _period;
         private string _processId;
 
+        [Obsolete]
         public TimerTriggerBinding(ILog log)
         {
-            if (log == null)
-                throw new ArgumentNullException(nameof(log));
-            _log = log;
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+        }
+
+        public TimerTriggerBinding(ILogFactory logFactory)
+        {
+            if (logFactory == null)
+            {
+                throw new ArgumentNullException(nameof(logFactory));
+            }
+
+            _log = logFactory.CreateLog(this);
         }
 
         public override void InitBinding(IServiceProvider serviceProvider, MethodInfo callbackMethod)

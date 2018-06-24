@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.JobTriggers.Triggers.Bindings;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,10 +38,12 @@ namespace Lykke.JobTriggers.Triggers
 
             var tasks = _bindings.Select(o => o.RunAsync(_cancellationTokenSource.Token)).ToArray();
 
-            var logger = _serviceProvider.GetService<ILog>();
+            var logFactory = _serviceProvider.GetService<ILogFactory>();
+            // TODO: ILog resolving should be removed, when legacy logging system will be removed from the Lykke.Common
+            var log = logFactory?.CreateLog(this) ?? _serviceProvider.GetRequiredService<ILog>();
 
             await Task.WhenAll(tasks).ContinueWith(
-                task => logger.WriteInfoAsync("TriggerHost", "Start", "", "All bindings are finished")).Unwrap().ConfigureAwait(false);
+                task => log.WriteInfoAsync("TriggerHost", "Start", "", "All bindings are finished")).Unwrap().ConfigureAwait(false);
         }
 
         public void ProvideAssembly(params Assembly[] assemblies)

@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Features.ResolveAnything;
-using Common.Log;
 using Lykke.JobTriggers.Extenstions;
 using Lykke.JobTriggers.Triggers;
+using Lykke.Logs;
+using Lykke.Logs.Loggers.LykkeConsole;
 using Lykke.SettingsReader;
 
 namespace Test
@@ -17,27 +15,30 @@ namespace Test
     {
         public static void Main(string[] args)
         {
-            ContainerBuilder builder = new ContainerBuilder();
-
-            ILog log = new LogToConsole();
-
-            builder.RegisterInstance(log);
-
-            builder.AddTriggers(pool =>
+            using (var logFactory = LogFactory.Create().AddUnbufferedConsole())
             {
-                pool.AddDefaultConnection(new FakeReloadingManager("UseDevelopmentStorage=true"));
-            });
+                var builder = new ContainerBuilder();
+                
+                builder.RegisterInstance(logFactory);
 
-            builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
-            var container = builder.Build();
+                builder.AddTriggers(pool =>
+                {
+                    pool.AddDefaultConnection(new FakeReloadingManager("UseDevelopmentStorage=true"));
+                });
 
-            var host = new TriggerHost(new AutofacServiceProvider(container));
-            var task = host.Start();
+                builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
+                
+                using (var container = builder.Build())
+                {
+                    var host = new TriggerHost(new AutofacServiceProvider(container));
+                    var task = host.Start();
 
-            Console.ReadKey();
-            host.Cancel();
-            task.Wait();
-            Console.ReadKey();
+                    Console.ReadKey();
+                    host.Cancel();
+                    task.Wait();
+                    Console.ReadKey();
+                }
+            }
         }
 
         public class FakeReloadingManager : IReloadingManager<string>
